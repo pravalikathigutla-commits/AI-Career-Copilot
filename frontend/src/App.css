@@ -1,0 +1,185 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+}
+
+.app {
+  min-height: 100vh;
+  padding: 50px 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+header h1 {
+  font-size: 44px;
+  margin-bottom: 10px;
+}
+
+header p {
+  color: #94a3b8;
+  font-size: 18px;
+}
+
+main {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.upload-card,
+.info-card,
+.score-card,
+.roadmap {
+  background: #1e293b;
+  border-radius: 18px;
+  padding: 28px;
+  margin-bottom: 25px;
+}
+
+.upload-card {
+  text-align: center;
+}
+
+.upload-card h2 {
+  font-size: 28px;
+}
+
+.upload-card p {
+  color: #cbd5e1;
+}
+
+input[type="file"] {
+  margin: 25px 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #334155;
+  color: white;
+}
+
+.selected-file {
+  color: #c084fc !important;
+}
+
+button {
+  display: block;
+  margin: 15px auto;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 10px;
+  background: #8b5cf6;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #7c3aed;
+}
+
+button:disabled {
+  background: #475569;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #f87171 !important;
+}
+
+.results > h2 {
+  text-align: center;
+  font-size: 30px;
+  margin: 40px 0 25px;
+}
+
+.score-card {
+  text-align: center;
+}
+
+.score {
+  font-size: 70px;
+  font-weight: bold;
+  color: #a78bfa;
+}
+
+.score span {
+  font-size: 25px;
+  color: #94a3b8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.info-card h3,
+.roadmap h3 {
+  margin-top: 0;
+  color: #c084fc;
+}
+
+.info-card li,
+.roadmap li {
+  margin: 10px 0;
+  line-height: 1.5;
+  color: #cbd5e1;
+}
+
+.full {
+  width: 100%;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tags span {
+  background: #334155;
+  padding: 10px 16px;
+  border-radius: 20px;
+  color: #e2e8f0;
+}
+
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.roadmap-grid > div {
+  background: #0f172a;
+  padding: 20px;
+  border-radius: 14px;
+}
+
+.roadmap-grid h4 {
+  color: #a78bfa;
+  font-size: 20px;
+}
+
+@media (max-width: 750px) {
+
+  .grid,
+  .roadmap-grid {
+    grid-template-columns: 1fr;
+  }
+
+  header h1 {
+    font-size: 34px;
+  }
+
+  .score {
+    font-size: 55px;
+  }
+
+}
