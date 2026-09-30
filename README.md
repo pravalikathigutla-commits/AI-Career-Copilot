@@ -12,6 +12,11 @@ Users can upload a resume PDF, and the application uses local AI to analyze the 
 * 🚀 Recommended projects
 * 🗺️ 3-month learning roadmap
 * ✨ Resume improvement suggestions
+## 📸 Project Demo
+
+![AI Career Copilot Demo](screenshot.png)
+
+The application allows users to upload a resume PDF and receive AI-powered career analysis using a locally running Qwen 2.5 model through Ollama.
 
 ## 🛠️ Tech Stack
 
