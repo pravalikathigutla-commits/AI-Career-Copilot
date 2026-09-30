@@ -1,0 +1,161 @@
+# 🚀 AI Career Copilot
+
+AI Career Copilot is an AI-powered resume analysis and career guidance application.
+
+Users can upload a resume PDF, and the application uses local AI to analyze the resume and provide:
+
+* 📊 Resume score
+* 💪 Strong skills
+* ⚠️ Missing or weak skills
+* 📚 Recommended skills to learn
+* 💼 Suitable job roles
+* 🚀 Recommended projects
+* 🗺️ 3-month learning roadmap
+* ✨ Resume improvement suggestions
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+* React
+* Vite
+* JavaScript
+* CSS
+
+### Backend
+
+* Python
+* FastAPI
+* PyPDF
+* Ollama
+
+### AI
+
+* Qwen 2.5 3B
+* Ollama local AI
+
+## 🏗️ Project Structure
+
+```text
+AI-Career-Copilot/
+│
+├── backend/
+│   ├── main.py
+│   ├── test_ai.py
+│   └── test_local_ai.py
+│
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+└── .gitignore
+```
+
+## ⚙️ How It Works
+
+```text
+User uploads Resume PDF
+          ↓
+React Frontend
+          ↓
+FastAPI Backend
+          ↓
+PDF Text Extraction
+          ↓
+Ollama + Qwen 2.5
+          ↓
+AI Resume Analysis
+          ↓
+Career Recommendations
+          ↓
+React Results Dashboard
+```
+
+## 🚀 Running the Project Locally
+
+### 1. Start Ollama
+
+Make sure Ollama is installed and the model is available:
+
+```bash
+ollama pull qwen2.5:3b
+```
+
+Start the model if required:
+
+```bash
+ollama run qwen2.5:3b
+```
+
+### 2. Start Backend
+
+Open PowerShell:
+
+```powershell
+cd "D:\Ai project\AI-Career-Copilot\backend"
+.\venv\Scripts\Activate.ps1
+uvicorn main:app --reload
+```
+
+Backend:
+
+```text
+http://127.0.0.1:8000
+```
+
+API documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+### 3. Start Frontend
+
+Open another terminal:
+
+```powershell
+cd "D:\Ai project\AI-Career-Copilot\frontend"
+npm run dev
+```
+
+Then open the Vite URL shown in the terminal.
+
+## ✨ Features
+
+* Resume PDF upload
+* Automatic resume text extraction
+* Local AI analysis
+* Resume scoring
+* Skill gap identification
+* Career role recommendations
+* Project recommendations
+* 3-month learning roadmap
+* Resume improvement suggestions
+* React-based user interface
+* FastAPI REST API
+
+## 🔒 Privacy
+
+The project is designed to use a local AI model through Ollama rather than sending resume content to a paid cloud AI API.
+
+## 📌 Future Improvements
+
+* Job description matching
+* ATS score analysis
+* Resume keyword optimization
+* AI-powered resume rewriting
+* Job recommendation system
+* Authentication
+* Resume history
+* Downloadable AI reports
+* Deployment with cloud infrastructure
+
+## 👩‍💻 Author
+
+**Pravalika Thigutla**
+
+GitHub: [@pravalikathigutla-commits](https://github.com/pravalikathigutla-commits)
