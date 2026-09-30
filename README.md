@@ -2,7 +2,7 @@
 
 AI Career Copilot is an AI-powered resume analysis and career guidance application.
 
-Users can upload a resume PDF, and the application uses local AI to analyze the resume and provide:
+Users can upload a resume PDF, and the application uses **local AI** to analyze the resume and provide:
 
 * 📊 Resume score
 * 💪 Strong skills
@@ -17,7 +17,7 @@ Users can upload a resume PDF, and the application uses local AI to analyze the 
 
 ![AI Career Copilot Demo](screenshot.png)
 
-The application allows users to upload a resume PDF and receive AI-powered career analysis using a locally running Qwen 2.5 model through Ollama.
+The application allows users to upload a resume PDF and receive AI-powered career analysis using a locally running **Qwen 2.5** model through **Ollama**.
 
 ## 🛠️ Tech Stack
 
@@ -63,7 +63,7 @@ AI-Career-Copilot/
 └── .gitignore
 ```
 
-## ⚙️ How It Works
+## 🏗️ How It Works
 
 ```text
 User uploads Resume PDF
@@ -87,7 +87,7 @@ React Results Dashboard
 
 ### 1. Start Ollama
 
-Make sure Ollama is installed and the model is available:
+Make sure Ollama is installed and the Qwen model is available.
 
 ```bash
 ollama pull qwen2.5:3b
@@ -99,7 +99,7 @@ Start the model:
 ollama run qwen2.5:3b
 ```
 
-### 2. Start Backend
+### 2. Start the Backend
 
 Open PowerShell:
 
@@ -121,7 +121,7 @@ API documentation:
 http://127.0.0.1:8000/docs
 ```
 
-### 3. Start Frontend
+### 3. Start the Frontend
 
 Open another terminal:
 
@@ -130,37 +130,40 @@ cd "D:\Ai project\AI-Career-Copilot\frontend"
 npm run dev
 ```
 
-Then open the Vite URL shown in the terminal.
+Open the Vite URL displayed in the terminal.
 
 ## ✨ Features
 
-* Resume PDF upload
-* Automatic resume text extraction
-* Local AI analysis
-* Resume scoring
-* Skill gap identification
-* Career role recommendations
-* Project recommendations
-* 3-month learning roadmap
-* Resume improvement suggestions
-* React-based user interface
-* FastAPI REST API
+* 📄 Resume PDF upload
+* 🔍 Automatic resume text extraction
+* 🤖 Local AI resume analysis
+* 📊 Resume scoring
+* 💪 Skill identification
+* ⚠️ Skill gap identification
+* 💼 Career role recommendations
+* 🚀 Project recommendations
+* 🗺️ 3-month learning roadmap
+* ✨ Resume improvement suggestions
+* ⚛️ React-based user interface
+* ⚡ FastAPI REST API
 
 ## 🔒 Privacy
 
-The project is designed to use a local AI model through Ollama rather than sending resume content to a paid cloud AI API.
+The project is designed to use a **local AI model through Ollama**, rather than sending resume content to a paid cloud AI API.
+
+This allows resume analysis to run locally on the user's machine.
 
 ## 📌 Future Improvements
 
-* Job description matching
-* ATS score analysis
-* Resume keyword optimization
-* AI-powered resume rewriting
-* Job recommendation system
-* Authentication
-* Resume history
-* Downloadable AI reports
-* Deployment with cloud infrastructure
+* 🎯 Job description matching
+* 📊 ATS score analysis
+* 🔑 Resume keyword optimization
+* ✍️ AI-powered resume rewriting
+* 💼 Job recommendation system
+* 🔐 User authentication
+* 📂 Resume history
+* 📥 Downloadable AI reports
+* ☁️ Cloud deployment
 
 ## 👩‍💻 Author
 
