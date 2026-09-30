@@ -12,6 +12,7 @@ Users can upload a resume PDF, and the application uses local AI to analyze the 
 * 🚀 Recommended projects
 * 🗺️ 3-month learning roadmap
 * ✨ Resume improvement suggestions
+
 ## 📸 Project Demo
 
 ![AI Career Copilot Demo](screenshot.png)
@@ -37,7 +38,7 @@ The application allows users to upload a resume PDF and receive AI-powered caree
 ### AI
 
 * Qwen 2.5 3B
-* Ollama local AI
+* Ollama Local AI
 
 ## 🏗️ Project Structure
 
@@ -57,6 +58,8 @@ AI-Career-Copilot/
 │   ├── package.json
 │   └── vite.config.js
 │
+├── screenshot.png
+├── README.md
 └── .gitignore
 ```
 
@@ -90,7 +93,7 @@ Make sure Ollama is installed and the model is available:
 ollama pull qwen2.5:3b
 ```
 
-Start the model if required:
+Start the model:
 
 ```bash
 ollama run qwen2.5:3b
