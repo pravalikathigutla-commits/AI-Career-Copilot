@@ -2,4 +2,5 @@ fastapi
 uvicorn
 python-multipart
 pypdf
-ollama
+google-genai
+python-dotenv
