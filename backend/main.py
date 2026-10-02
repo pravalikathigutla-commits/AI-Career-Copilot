@@ -1,13 +1,55 @@
+
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pypdf import PdfReader
+from google import genai
+from google.genai import types
+from dotenv import load_dotenv
+
 import os
 import json
-import ollama
+import tempfile
+import time
+
+
+# ==========================================
+# 1. Load Environment Variables
+# ==========================================
+
+load_dotenv()
+
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+client = None
+
+if GEMINI_API_KEY:
+    client = genai.Client(api_key=GEMINI_API_KEY)
+
+
+# ==========================================
+# 2. Create FastAPI Application
+# ==========================================
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://ai-career-copilot-zeta-five.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Allow React frontend to communicate with FastAPI
+
+# ==========================================
+# 3. Allow React Frontend
+# ==========================================
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,9 +58,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# ==========================================
+# 4. Home Route
+# ==========================================
 
 @app.get("/")
 def home():
@@ -27,37 +70,98 @@ def home():
     }
 
 
+# ==========================================
+# 5. Upload Resume
+# ==========================================
+
 @app.post("/upload-resume")
 async def upload_resume(file: UploadFile = File(...)):
 
-    # -----------------------------------
-    # 1. Save uploaded resume
-    # -----------------------------------
+    # --------------------------------------
+    # Check Gemini API Key
+    # --------------------------------------
 
-    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    if client is None:
+        return {
+            "error": "Gemini API key is not configured."
+        }
 
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
+    # --------------------------------------
+    # Check File Type
+    # --------------------------------------
 
-    # -----------------------------------
-    # 2. Extract text from PDF
-    # -----------------------------------
+    if not file.filename:
+        return {
+            "error": "Please select a file."
+        }
 
-    reader = PdfReader(file_path)
+    if not file.filename.lower().endswith(".pdf"):
+        return {
+            "error": "Please upload a PDF resume."
+        }
 
-    resume_text = ""
+    # --------------------------------------
+    # Read Uploaded File
+    # --------------------------------------
 
-    for page in reader.pages:
-        page_text = page.extract_text()
+    file_bytes = await file.read()
 
-        if page_text:
-            resume_text += page_text + "\n"
+    if not file_bytes:
+        return {
+            "error": "The uploaded file is empty."
+        }
 
-    # -----------------------------------
-    # 3. AI Prompt
-    # -----------------------------------
+    # --------------------------------------
+    # Temporary File Path
+    # --------------------------------------
 
-    prompt = f"""
+    temp_file_path = None
+
+    try:
+
+        # ======================================
+        # Save PDF Temporarily
+        # ======================================
+
+        with tempfile.NamedTemporaryFile(
+            delete=False,
+            suffix=".pdf"
+        ) as temp_file:
+
+            temp_file.write(file_bytes)
+            temp_file_path = temp_file.name
+
+        # ======================================
+        # Extract Text From PDF
+        # ======================================
+
+        reader = PdfReader(temp_file_path)
+
+        resume_text = ""
+
+        for page in reader.pages:
+
+            page_text = page.extract_text()
+
+            if page_text:
+                resume_text += page_text + "\n"
+
+        resume_text = resume_text.strip()
+
+        # ======================================
+        # Check Resume Text
+        # ======================================
+
+        if not resume_text:
+            return {
+                "error": "Could not extract text from the PDF resume."
+            }
+
+        # ======================================
+        # AI Prompt
+        # ======================================
+
+        prompt = f"""
 You are an AI Career Copilot for a Computer Science student
 who wants to become a Software Engineer.
 
@@ -230,85 +334,164 @@ RESUME
 {resume_text}
 """
 
-    # -----------------------------------
-    # 4. Run local Qwen AI
-    # -----------------------------------
+        # ======================================
+        # Run Gemini AI With Retry
+        # ======================================
 
-    response = ollama.chat(
-        model="qwen2.5:3b",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
+        response = None
+
+        for attempt in range(3):
+
+            try:
+
+                print(
+                    f"Sending request to Gemini... "
+                    f"Attempt {attempt + 1}/3"
+                )
+
+                response = client.models.generate_content(
+                    model="gemini-3.8-flash",
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json"
+                    )
+                )
+
+                print("Gemini response received.")
+
+                break
+
+            except Exception as e:
+
+                error_message = str(e)
+
+                print(
+                    f"Gemini attempt {attempt + 1} failed: "
+                    f"{error_message}"
+                )
+
+                if attempt == 2:
+                    raise
+
+                print("Retrying in 3 seconds...")
+
+                time.sleep(3)
+
+        # ======================================
+        # Check Gemini Response
+        # ======================================
+
+        if response is None:
+            return {
+                "error": "Gemini did not return a response."
             }
-        ],
-        options={
-            "temperature": 0.1
+
+        if not response.text:
+            return {
+                "error": "Gemini returned an empty response."
+            }
+
+        # ======================================
+        # Get Gemini Response Text
+        # ======================================
+
+        ai_text = response.text.strip()
+
+        # ======================================
+        # Remove Accidental Markdown
+        # ======================================
+
+        if ai_text.startswith("```"):
+            print("========== GEMINI RAW RESPONSE ==========")
+            print(ai_text)
+            print("=========================================")
+
+            ai_text = ai_text.replace(
+                "```json",
+                ""
+            )
+
+            ai_text = ai_text.replace(
+                "```",
+                ""
+            )
+
+            ai_text = ai_text.strip()
+
+        # ======================================
+        # Convert Gemini Response To JSON
+        # ======================================
+
+        try:
+
+            ai_analysis = json.loads(ai_text)
+
+        except json.JSONDecodeError:
+
+            ai_analysis = {
+                "score": 0,
+
+                "score_breakdown": {
+                    "programming_languages": 0,
+                    "dsa_problem_solving": 0,
+                    "projects": 0,
+                    "internship_experience": 0,
+                    "core_cs": 0,
+                    "database_sql": 0,
+                    "development_skills": 0,
+                    "resume_quality": 0
+                },
+
+                "strong_skills": [],
+
+                "missing_skills": [],
+
+                "recommended_skills": [],
+
+                "job_roles": [],
+
+                "recommended_projects": [],
+
+                "roadmap": {
+                    "month_1": [],
+                    "month_2": [],
+                    "month_3": []
+                },
+
+                "improvements": [
+                    "Gemini returned an invalid JSON response. Please try again."
+                ]
+            }
+
+        # ======================================
+        # Return Result
+        # ======================================
+
+        return {
+            "filename": file.filename,
+            "resume_text": resume_text,
+            "ai_analysis": ai_analysis
         }
-    )
 
-    ai_text = response["message"]["content"].strip()
+    except Exception as e:
 
-    # -----------------------------------
-    # 5. Remove accidental markdown
-    # -----------------------------------
+        print(
+            f"Resume analysis failed: {str(e)}"
+        )
 
-    if ai_text.startswith("```"):
-        ai_text = ai_text.replace("```json", "")
-        ai_text = ai_text.replace("```", "")
-        ai_text = ai_text.strip()
-
-    # -----------------------------------
-    # 6. Convert AI response to JSON
-    # -----------------------------------
-
-    try:
-
-        ai_analysis = json.loads(ai_text)
-
-    except json.JSONDecodeError:
-
-        ai_analysis = {
-            "score": 0,
-
-            "score_breakdown": {
-                "programming_languages": 0,
-                "dsa_problem_solving": 0,
-                "projects": 0,
-                "internship_experience": 0,
-                "core_cs": 0,
-                "database_sql": 0,
-                "development_skills": 0,
-                "resume_quality": 0
-            },
-
-            "strong_skills": [],
-
-            "missing_skills": [],
-
-            "recommended_skills": [],
-
-            "job_roles": [],
-
-            "recommended_projects": [],
-
-            "roadmap": {
-                "month_1": [],
-                "month_2": [],
-                "month_3": []
-            },
-
-            "improvements": [
-                "AI returned an invalid response. Please try again."
-            ]
+        return {
+            "error": f"Resume analysis failed: {str(e)}"
         }
 
-    # -----------------------------------
-    # 7. Return result
-    # -----------------------------------
+    finally:
 
-    return {
-        "filename": file.filename,
-        "resume_text": resume_text,
-        "ai_analysis": ai_analysis
-    }
+        # ======================================
+        # Delete Temporary File
+        # ======================================
+
+        if (
+            temp_file_path
+            and os.path.exists(temp_file_path)
+        ):
+
+            os.remove(temp_file_path)
